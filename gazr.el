@@ -8,6 +8,8 @@
 
 ;;; Code:
 
+(require 'transient)
+
 (defgroup gazr nil
   "Controlling gazr Makefile from Emacs."
   :group 'tools)
@@ -22,50 +24,60 @@
    ("r" "run"           gazr-launch-run)]
   [("q" "quit"          transient-quit-one)])
 
-(defun gazr-launch (target)
-  (interactive)
-  (call-process "make" nil "gazr-process" nil target))
+(defun gazr--find-makefile (&optional path)
+  (let ((path (or path (setq path (buffer-file-name))))
+        (parent (file-name-directory (directory-file-name (expand-file-name path))))
+        (makefile (concat (file-name-directory path) "Makefile")))
+    (if (string= path "/")
+        nil
+      (if (file-readable-p makefile)
+          makefile
+        (gazr--find-makefile parent)))))
+
+(defun gazr--launch (target)
+  (let ((command (format "cd %s; make %s\n" (file-name-directory (gazr--find-makefile)) target)))
+      (compile command)))
 
 (defun gazr-launch-init ()
   (interactive)
-  (gazr-launch "init"))
+  (gazr--launch "init"))
 
 (defun gazr-launch-build ()
   (interactive)
-  (gazr-launch "build"))
+  (gazr--launch "build"))
 
 (transient-define-prefix gazr-test ()
   "Launch gazr test targets."
   ["Gazr Tests Targets"
    ("t" "test"          gazr-launch-test)
-   ("u" "unit"   gazr-launch-test-unit)
+   ("u" "unit"          gazr-launch-test-unit)
    ("i" "integration"   gazr-launch-test-integration)
-   ("f" "functional"   gazr-launch-test-functional)]
+   ("f" "functional"    gazr-launch-test-functional)]
   [("q" "quit"          transient-quit-one)])
 
 (defun gazr-launch-test ()
   (interactive)
-  (gazr-launch "test"))
+  (gazr--launch "test"))
 
 (defun gazr-launch-style ()
   (interactive)
-  (gazr-launch "style"))
+  (gazr--launch "style"))
 
 (defun gazr-launch-test-integration ()
   (interactive)
-  (gazr-launch "test-integration"))
+  (gazr--launch "test-integration"))
 
 (defun gazr-launch-test-unit ()
   (interactive)
-  (gazr-launch "test-unit"))
+  (gazr--launch "test-unit"))
 
 (defun gazr-launch-test-functional ()
   (interactive)
-  (gazr-launch "test-functional"))
+  (gazr--launch "test-functional"))
 
 (defun gazr-launch-run ()
   (interactive)
-  (gazr-launch "run"))
+  (gazr--launch "run"))
 
 (provide 'gazr)
 ;;; gazr.el ends here
