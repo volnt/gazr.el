@@ -22,28 +22,6 @@
    ("r" "run"           gazr-launch-run)]
   [("q" "quit"          transient-quit-one)])
 
-(defun gazr--find-makefile (&optional path)
-  (let ((path (or path (setq path (buffer-file-name))))
-        (parent (file-name-directory (directory-file-name (expand-file-name path))))
-        (makefile (concat (file-name-directory path) "Makefile")))
-    (if (string= path "/")
-        nil
-      (if (file-readable-p makefile)
-          makefile
-        (gazr--find-makefile parent)))))
-
-(defun gazr--launch (target)
-  (let ((command (format "cd %s; make %s\n" (file-name-directory (gazr--find-makefile)) target)))
-      (compile command)))
-
-(defun gazr-launch-init ()
-  (interactive)
-  (gazr--launch "init"))
-
-(defun gazr-launch-build ()
-  (interactive)
-  (gazr--launch "build"))
-
 (transient-define-prefix gazr-test ()
   "Launch gazr test targets."
   ["Gazr Tests Targets"
@@ -52,6 +30,14 @@
    ("i" "integration"   gazr-launch-test-integration)
    ("f" "functional"    gazr-launch-test-functional)]
   [("q" "quit"          transient-quit-one)])
+
+(defun gazr-launch-init ()
+  (interactive)
+  (gazr--launch "init"))
+
+(defun gazr-launch-build ()
+  (interactive)
+  (gazr--launch "build"))
 
 (defun gazr-launch-test ()
   (interactive)
@@ -76,6 +62,21 @@
 (defun gazr-launch-run ()
   (interactive)
   (gazr--launch "run"))
+
+(defun gazr--find-makefile (&optional path)
+  "Search a readable Makefile in current directory and all parent directories from PATH."
+  (let ((path (or path (setq path (buffer-file-name))))
+        (parent (file-name-directory (directory-file-name (expand-file-name path))))
+        (makefile (concat (file-name-directory path) "Makefile")))
+    (if (string= path "/")
+        nil
+      (if (file-readable-p makefile)
+          makefile
+        (gazr--find-makefile parent)))))
+
+(defun gazr--launch (target)
+  (let ((command (format "cd %s; make %s\n" (file-name-directory (gazr--find-makefile)) target)))
+      (compile command)))
 
 (provide 'gazr)
 ;;; gazr.el ends here
