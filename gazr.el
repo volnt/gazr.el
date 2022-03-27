@@ -1,10 +1,8 @@
 ;;; Package --- gazr.el
 ;;;
 ;;; Commentary:
-;;; Custom implementation of goto-line
-;;; Read line from minibuffer
-;;; Cast it to integer
-;;; And move cursor to line
+;;; Gazr.el can launch Gazr tasks on your project.
+;;; It will search a readable Makefile in the current directory and all parent directories.
 
 ;;; Code:
 
