@@ -15,24 +15,24 @@
 (transient-define-prefix  gazr ()
   "Launch gazr targets."
   ["Gazr Targets"
-   ("i" "init"          (lambda () (gazr--launch "init")))
-   ("s" "style"         (lambda () (gazr--launch "style")))
-   ("c" "complexity"    (lambda () (gazr--launch "complexity")))
-   ("f" "format"        (lambda () (gazr--launch "format")))
+   ("i" "init"          (lambda () (interactive) (gazr--launch "init")))
+   ("s" "style"         (lambda () (interactive) (gazr--launch "style")))
+   ("c" "complexity"    (lambda () (interactive) (gazr--launch "complexity")))
+   ("f" "format"        (lambda () (interactive) (gazr--launch "format")))
    ("t" "test"          gazr-test)
-   ("r" "run"           (lambda () (gazr--launch "run")))
-   ("w" "watch"         (lambda () (gazr--launch "watch")))
-   ("b" "build"         (lambda () (gazr--launch "build")))]
+   ("r" "run"           (lambda () (interactive) (gazr--launch "run")))
+   ("w" "watch"         (lambda () (interactive) (gazr--launch "watch")))
+   ("b" "build"         (lambda () (interactive) (gazr--launch "build")))]
   [("q" "quit"          transient-quit-one)])
 
 (transient-define-prefix gazr-test ()
   "Launch gazr test targets."
   ["Gazr Tests Targets"
-   ("t" "test"          (lambda () (gazr--launch "test")))
-   ("u" "unit"          (lambda () (gazr--launch "test-unit")))
-   ("f" "functional"    (lambda () (gazr--launch "test-functional")))
-   ("i" "integration"   (lambda () (gazr--launch "test-integration")))
-   ("s" "security-sast" (lambda () (gazr--launch "security-sast")))]
+   ("t" "test"          (lambda () (interactive) (gazr--launch "test")))
+   ("u" "unit"          (lambda () (interactive) (gazr--launch "test-unit")))
+   ("f" "functional"    (lambda () (interactive) (gazr--launch "test-functional")))
+   ("i" "integration"   (lambda () (interactive) (gazr--launch "test-integration")))
+   ("s" "security-sast" (lambda () (interactive) (gazr--launch "security-sast")))]
   [("q" "quit"          transient-quit-one)])
 
 (defun gazr--find-makefile (&optional path)
@@ -47,6 +47,7 @@
         (gazr--find-makefile parent)))))
 
 (defun gazr--launch (target)
+  (interactive)
   (let ((command
          (format "cd %s; make %s\n" (file-name-directory (gazr--find-makefile)) target)))
       (compile command)))
