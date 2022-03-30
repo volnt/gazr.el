@@ -47,6 +47,7 @@
         (gazr--find-makefile parent)))))
 
 (defun gazr--launch (target)
+  "Launch a gazr TARGET in *compilation* buffer."
   (interactive)
   (let ((command
          (format "cd %s; make %s\n" (file-name-directory (gazr--find-makefile)) target)))
