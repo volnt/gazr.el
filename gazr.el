@@ -16,10 +16,13 @@
   "Launch gazr targets."
   ["Gazr Targets"
    ("i" "init"          (lambda () (gazr--launch "init")))
-   ("b" "build"         (lambda () (gazr--launch "build")))
    ("s" "style"         (lambda () (gazr--launch "style")))
+   ("c" "complexity"    (lambda () (gazr--launch "complexity")))
+   ("f" "format"        (lambda () (gazr--launch "format")))
    ("t" "test"          gazr-test)
-   ("r" "run"           (lambda () (gazr--launch "run")))]
+   ("r" "run"           (lambda () (gazr--launch "run")))
+   ("w" "watch"         (lambda () (gazr--launch "watch")))
+   ("b" "build"         (lambda () (gazr--launch "build")))]
   [("q" "quit"          transient-quit-one)])
 
 (transient-define-prefix gazr-test ()
@@ -27,8 +30,9 @@
   ["Gazr Tests Targets"
    ("t" "test"          (lambda () (gazr--launch "test")))
    ("u" "unit"          (lambda () (gazr--launch "test-unit")))
+   ("f" "functional"    (lambda () (gazr--launch "test-functional")))
    ("i" "integration"   (lambda () (gazr--launch "test-integration")))
-   ("f" "functional"    (lambda () (gazr--launch "test-functional")))]
+   ("s" "security-sast" (lambda () (gazr--launch "security-sast")))]
   [("q" "quit"          transient-quit-one)])
 
 (defun gazr--find-makefile (&optional path)
