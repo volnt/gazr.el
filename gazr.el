@@ -56,7 +56,7 @@
 
 (defun gazr--find-makefile (&optional path)
   "Search a readable Makefile in current directory and all parent directories from PATH."
-  (let ((path (or path (setq path (buffer-file-name))))
+  (let ((path (or path (setq path (pwd))))
         (parent (file-name-directory (directory-file-name (expand-file-name path))))
         (makefile (concat (file-name-directory path) "Makefile")))
     (if (string= path "/")
