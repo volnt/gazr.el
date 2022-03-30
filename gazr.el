@@ -15,53 +15,21 @@
 (transient-define-prefix  gazr ()
   "Launch gazr targets."
   ["Gazr Targets"
-   ("i" "init"          gazr-launch-init)
-   ("b" "build"         gazr-launch-build)
-   ("s" "style"         gazr-launch-style)
+   ("i" "init"          (lambda () (gazr--launch "init")))
+   ("b" "build"         (lambda () (gazr--launch "build")))
+   ("s" "style"         (lambda () (gazr--launch "style")))
    ("t" "test"          gazr-test)
-   ("r" "run"           gazr-launch-run)]
+   ("r" "run"           (lambda () (gazr--launch "run")))]
   [("q" "quit"          transient-quit-one)])
 
 (transient-define-prefix gazr-test ()
   "Launch gazr test targets."
   ["Gazr Tests Targets"
-   ("t" "test"          gazr-launch-test)
-   ("u" "unit"          gazr-launch-test-unit)
-   ("i" "integration"   gazr-launch-test-integration)
-   ("f" "functional"    gazr-launch-test-functional)]
+   ("t" "test"          (lambda () (gazr--launch "test")))
+   ("u" "unit"          (lambda () (gazr--launch "test-unit")))
+   ("i" "integration"   (lambda () (gazr--launch "test-integration")))
+   ("f" "functional"    (lambda () (gazr--launch "test-functional")))]
   [("q" "quit"          transient-quit-one)])
-
-(defun gazr-launch-init ()
-  (interactive)
-  (gazr--launch "init"))
-
-(defun gazr-launch-build ()
-  (interactive)
-  (gazr--launch "build"))
-
-(defun gazr-launch-test ()
-  (interactive)
-  (gazr--launch "test"))
-
-(defun gazr-launch-style ()
-  (interactive)
-  (gazr--launch "style"))
-
-(defun gazr-launch-test-integration ()
-  (interactive)
-  (gazr--launch "test-integration"))
-
-(defun gazr-launch-test-unit ()
-  (interactive)
-  (gazr--launch "test-unit"))
-
-(defun gazr-launch-test-functional ()
-  (interactive)
-  (gazr--launch "test-functional"))
-
-(defun gazr-launch-run ()
-  (interactive)
-  (gazr--launch "run"))
 
 (defun gazr--find-makefile (&optional path)
   "Search a readable Makefile in current directory and all parent directories from PATH."
@@ -75,7 +43,8 @@
         (gazr--find-makefile parent)))))
 
 (defun gazr--launch (target)
-  (let ((command (format "cd %s; make %s\n" (file-name-directory (gazr--find-makefile)) target)))
+  (let ((command
+         (format "cd %s; make %s\n" (file-name-directory (gazr--find-makefile)) target)))
       (compile command)))
 
 (provide 'gazr)
