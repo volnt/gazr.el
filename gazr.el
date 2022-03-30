@@ -46,6 +46,46 @@
           makefile
         (gazr--find-makefile parent)))))
 
+(defun gazr--parse-makefile-targets (content)
+  "Search CONTENT for .PHONY targets and return them as a list of strings."
+  (let ((targets (list))
+        (start nil))
+    (while (string-match "^\.PHONY:" content start)
+      (progn
+        (setq start (match-end 0))
+        (setq targets (append (split-string (substring content (match-end 0) (or (string-match "\n" content (match-end 0))))) targets))))
+    (delete-dups targets)))
+
+(defun gazr--find-makefile-targets (makefile)
+  "Open MAKEFILE and parse its targets."
+  (let ((targets (list)))
+    (with-temp-buffer
+      (insert-file-contents makefile)
+      (gazr--parse-makefile-targets (buffer-string)))))
+
+(defun gazr--extract-words-first-letters (string)
+  "Extract the first letters of each word composing the STRING.
+Words are separated by a - (dash)."
+  (let ((letters (cl-loop for word in (split-string string "-") if (not (equal word "")) collect (substring word 0 1))))
+    (if (equal (length letters) 0)
+        nil
+        (string-join letters ""))))
+
+(defun gazr--transient-children-setup (_)
+   (cl-loop
+    for target in (gazr--find-makefile-targets (gazr--find-makefile))
+    collect (car (transient--parse-child
+             'foobar
+             (list
+              (gazr--extract-words-first-letters target)
+              target
+              (lambda () (interactive) (gazr--launch target)))))))
+
+(transient-define-prefix foobar ()
+  "Foobar"
+  ["Foo yay"
+   :setup-children gazr--transient-children-setup])
+
 (defun gazr--launch (target)
   "Launch a gazr TARGET in *compilation* buffer."
   (interactive)
