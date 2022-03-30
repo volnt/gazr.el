@@ -13,7 +13,14 @@ Using [straight.el](https://github.com/raxod502/straight.el):
     :straight (gazr :type git :host github :repo "volnt/gazr.el")
     :bind (("C-c C-g" . gazr)))
 ```
+## Dependencies
+
+* [transient](https://github.com/magit/transient)
 
 ## Usage
 
 `M-x gazr` or `C-c C-g` to invoke the gazr transient.
+
+## Test
+
+`make test`
